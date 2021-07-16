@@ -1,0 +1,62 @@
+version: "3.7"
+
+services:
+  cloudflared:
+    image: visibilityspots/cloudflared:latest
+    ports:
+      - target: 5054
+        published: 5054
+        protocol: tcp
+      - target: 5054
+        published: 5054
+        protocol: udp
+    networks:
+      - traefik
+
+  pihole:
+    image: pihole/pihole:v5.8.1
+    volumes:
+      - pihole:/etc/pihole
+      - dnsmasq:/etc/dnsmasq.d
+    depends_on:
+      - cloudflared
+    environment:
+      - TZ=America/Los_Angeles
+      - DNS1=172.18.0.1#5054 #replace with docker_gwbridge's gateway ip
+      - DNS2=no
+      - REV_SERVER=true
+      - REV_SERVER_CIDR=192.168.1.0/24 #Update these fields to match your environment
+      - REV_SERVER_TARGET=192.168.1.1
+      - REV_SERVER_DOMAIN=home.local
+      - WEBPASSWORD_FILE=/run/secrets/pihole_webpw
+    secrets:
+      - pihole_webpw
+    networks:
+      - traefik
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.piholeweb.rule=Host(`pihole.home.local`)
+        - traefik.http.routers.piholeweb.entrypoints=web
+        - traefik.http.services.piholeweb.loadbalancer.server.port=80
+        # 53/udp
+        - traefik.udp.routers.pihole-dns-udp.entrypoints=dns-udp
+        - traefik.udp.routers.pihole-dns-udp.service=pihole-dns-udp
+        - traefik.udp.services.pihole-dns-udp.loadbalancer.server.port=53
+        # 53/tcp
+        - traefik.tcp.routers.pihole-dns-tcp.rule=HostSNI(`*`)
+        - traefik.tcp.routers.pihole-dns-tcp.entrypoints=dns-tcp
+        - traefik.tcp.routers.pihole-dns-tcp.service=pihole-dns-tcp
+        - traefik.tcp.services.pihole-dns-tcp.loadbalancer.server.port=53
+
+networks:
+  traefik:
+    external: true
+
+volumes:
+  pihole:
+  dnsmasq:
+
+secrets:
+  pihole_webpw:
+    external: true

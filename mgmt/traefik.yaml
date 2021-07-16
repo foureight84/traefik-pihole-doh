@@ -1,0 +1,17 @@
+entryPoints:
+  web:
+    address: ':80'
+  dns-tcp:
+    address: ':53'
+  dns-udp:
+    address: ':53/udp'
+
+providers:
+  docker:
+    swarmMode: true
+
+api:
+  insecure: true
+
+log:
+  level: ERROR
