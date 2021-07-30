@@ -14,7 +14,7 @@ services:
       - traefik
 
   pihole:
-    image: pihole/pihole:v5.8.1
+    image: pihole/pihole:latest
     volumes:
       - pihole:/etc/pihole
       - dnsmasq:/etc/dnsmasq.d
