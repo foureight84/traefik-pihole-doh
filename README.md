@@ -13,4 +13,4 @@
   - Unbound recursive dns
   - Pi-hole DNS adblocker
 
-My write up to get up and running https://blog.foureight84.com/swarm-your-pihole/
+My write up to get up and running with cloudflare https://blog.foureight84.com/swarm-your-pihole/ or with Unbound https://blog.foureight84.com/pi-hole-recursive-dns/
