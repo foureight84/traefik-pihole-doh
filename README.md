@@ -1,4 +1,4 @@
-# Docker Swarm Pi-hole with DoH proxy support
+# Docker Swarm Pi-hole with DoH proxy support using Cloudflare or local recursive DNS using Unbound
 
 ### Stack overview
 
