@@ -22,12 +22,11 @@ services:
       - cloudflared
     environment:
       - TZ=America/Los_Angeles
-      - DNS1=172.18.0.1#5054 #replace with docker_gwbridge's gateway ip
-      - DNS2=no
+      - PIHOLE_DNS_=172.18.0.1#5054 #replace with docker_gwbridge's gateway ip
       - REV_SERVER=true
       - REV_SERVER_CIDR=192.168.1.0/24 #Update these fields to match your environment
       - REV_SERVER_TARGET=192.168.1.1
-      - REV_SERVER_DOMAIN=home.local
+      - REV_SERVER_DOMAIN=home
       - WEBPASSWORD_FILE=/run/secrets/pihole_webpw
     secrets:
       - pihole_webpw
@@ -36,7 +35,7 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.routers.piholeweb.rule=Host(`pihole.home.local`)
+        - traefik.http.routers.piholeweb.rule=Host(`pihole.home`)
         - traefik.http.routers.piholeweb.entrypoints=web
         - traefik.http.services.piholeweb.loadbalancer.server.port=80
         # 53/udp
