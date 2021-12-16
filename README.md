@@ -6,7 +6,7 @@
   - Traefik - reverse proxy and load balancer
   - Portainer - Web UI Docker management tool
   - Whoami - Tiny Go webserver that prints os information and HTTP request to output
-- Cloudflare DNS Stack (dns-cloudflare-doh)
+- Cloudflare DNS Stack (dns)
   - Cloudflared DoH Proxy
   - Pi-hole DNS adblocker
 - Unbound DNS Stack (dns-unbound)
