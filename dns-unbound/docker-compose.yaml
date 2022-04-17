@@ -3,11 +3,6 @@ version: "3.7"
 services:
   unbound:
     image: klutchell/unbound:latest
-    volumes:
-      - unbound:/opt/unbound/etc/unbound
-    ports:
-      - 5053:53/udp
-      - 5053:53
     networks:
       - traefik
 
@@ -20,7 +15,7 @@ services:
       - unbound
     environment:
       - TZ=America/Los_Angeles
-      - PIHOLE_DNS_=172.18.0.1#5053 #replace with docker_gwbridge's gateway ip
+      - PIHOLE_DNS_=unbound
       - REV_SERVER=true
       - REV_SERVER_CIDR=192.168.1.0/24 #Update these fields to match your environment
       - REV_SERVER_TARGET=192.168.1.1
@@ -53,7 +48,6 @@ networks:
 volumes:
   pihole:
   dnsmasq:
-  unbound:
 
 secrets:
   pihole_webpw:
