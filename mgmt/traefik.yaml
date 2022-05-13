@@ -10,6 +10,7 @@ providers:
   docker:
     swarmMode: true
     exposedByDefault: false
+    network: traefik
 
 api:
   insecure: true
