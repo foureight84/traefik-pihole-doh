@@ -15,14 +15,5 @@ providers:
 api:
   insecure: true
 
-metrics:
-  influxDB:
-    address: telegraf:8089
-    protocol: udp
-    database: "traefik"
-    addEntryPointsLabels: true 
-    addServicesLabels: true
-    pushInterval: 10s
-
 log:
   level: ERROR

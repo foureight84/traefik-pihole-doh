@@ -1,26 +1,9 @@
 version: "3.7"
 
 services:
-  agent:
-    image: portainer/agent:latest
-    environment:
-      # REQUIRED: Should be equal to the service name prefixed by "tasks." when
-      # deployed inside an overlay network
-      AGENT_CLUSTER_ADDR: tasks.agent
-      # AGENT_PORT: 9001
-      # LOG_LEVEL: debug
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/docker/volumes:/var/lib/docker/volumes
-    networks:
-      - agent_network
-    deploy:
-      mode: global
-      placement:
-        constraints: [node.platform.os == linux]
-
   traefik:
     image: traefik:latest
+    hostname: traefik
     ports:
       - target: 53
         published: 53
@@ -41,19 +24,20 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.http.routers.api.rule=Host(`traefik.home`)
-        - traefik.http.routers.api.service=api@internal
-        - traefik.http.routers.api.entrypoints=web
-        - traefik.http.services.api.loadbalancer.server.port=8080
+        - traefik.http.routers.traefik.rule=Host(`traefik.home`)
+        - traefik.http.routers.traefik.service=api@internal
+        - traefik.http.routers.traefik.entrypoints=web
+        - traefik.http.services.traefik.loadbalancer.server.port=80
 
   portainer:
     image: portainer/portainer-ce:latest
-    command: -H tcp://tasks.agent:9001 --tlsskipverify
+    hostname: portainer
+    command: -H unix:///var/run/docker.sock
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     networks:
       - traefik
-      - agent_network
     deploy:
       mode: replicated
       replicas: 1
@@ -66,12 +50,6 @@ services:
         - traefik.http.routers.portainer.entrypoints=web
         - traefik.http.services.portainer.loadbalancer.server.port=9000
         - traefik.http.routers.portainer.service=portainer
-
-        # Edge
-        - traefik.http.routers.portaineredge.rule=Host(`edge.portainer.home`)
-        - traefik.http.routers.portaineredge.entrypoints=web
-        - traefik.http.services.portaineredge.loadbalancer.server.port=8000
-        - traefik.http.routers.portaineredge.service=portaineredge
       
   whoami:
     image: traefik/whoami
@@ -86,8 +64,6 @@ services:
 
 networks:
   traefik:
-    external: true
-  agent_network:
     external: true
 
 volumes:
