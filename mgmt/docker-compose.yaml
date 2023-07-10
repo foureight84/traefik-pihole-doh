@@ -15,7 +15,7 @@ services:
         published: 80
         protocol: tcp
     environment:
-      - TZ=US/Los_Angeles
+      - TZ=America/Los_Angeles
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik.yaml:/etc/traefik/traefik.yaml
